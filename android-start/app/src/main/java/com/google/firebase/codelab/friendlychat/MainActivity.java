@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -323,6 +324,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -334,6 +339,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
         mFirebaseAdapter.stopListening();
         super.onPause();
     }
@@ -342,10 +350,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onResume() {
         super.onResume();
         mFirebaseAdapter.startListening();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
     }
 
     @Override
     public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
         super.onDestroy();
     }
 
